@@ -45,11 +45,15 @@ def load_config():
 def get_dooray_config(config):
     """Extract Dooray skill config from OpenClaw config"""
     try:
-        dooray_config = config.get("skills", {}).get("entries", {}).get("dooray", {}).get("config", {})
+        # Try both 'dooray-hook' and 'dooray' keys for compatibility
+        entries = config.get("skills", {}).get("entries", {})
+        dooray_config = entries.get("dooray-hook", {}).get("config", {})
+        if not dooray_config:
+            dooray_config = entries.get("dooray", {}).get("config", {})
         return dooray_config
     except (KeyError, AttributeError):
         print("Error: Dooray skill config not found in OpenClaw config", file=sys.stderr)
-        print("Add 'skills.entries.dooray.config' to openclaw.json", file=sys.stderr)
+        print("Add 'skills.entries.dooray-hook.config' to openclaw.json", file=sys.stderr)
         sys.exit(1)
 
 
